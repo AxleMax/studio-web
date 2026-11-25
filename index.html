@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MC Bot Studio · 守夜 —— 你下线了，它还在</title>
+  <meta name="description" content="MC Bot Studio：为 Minecraft 玩家照看 Bot 助手的可靠运营平台，以及受控的插件生态。跟着 Bot「Lantern」值一夜班，了解产品特性、获取方式、手册与常见问题。" />
+  <meta name="theme-color" content="#0b0f26" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect x='6' y='0' width='4' height='1' fill='%232a2233'/%3E%3Crect x='5' y='1' width='1' height='2' fill='%232a2233'/%3E%3Crect x='10' y='1' width='1' height='2' fill='%232a2233'/%3E%3Crect x='3' y='3' width='10' height='2' fill='%232a2233'/%3E%3Crect x='3' y='5' width='2' height='7' fill='%232a2233'/%3E%3Crect x='11' y='5' width='2' height='7' fill='%232a2233'/%3E%3Crect x='5' y='5' width='6' height='7' fill='%23ffb547'/%3E%3Crect x='7' y='7' width='2' height='3' fill='%23fff1c1'/%3E%3Crect x='3' y='12' width='10' height='2' fill='%232a2233'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Serif+SC:wght@500;700;900&family=Silkscreen&display=swap" />
+  <script type="module" crossorigin src="./assets/index-DBOJhjvf.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-fGwKePOJ.css">
+</head>
+<body>
+  <!-- 世界：天空、日月、地形、Bot 与天气（纯装饰） -->
+  <canvas id="world" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <a class="skiplink" href="#download">跳到获取与部署</a>
+
+  <!-- 导航 -->
+  <nav class="nav" aria-label="主导航">
+    <a class="brand" href="#top" aria-label="MC Bot Studio 首页">
+      <svg class="brand__mark" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="6" y="0" width="4" height="1" fill="currentColor" />
+        <rect x="5" y="1" width="1" height="2" fill="currentColor" />
+        <rect x="10" y="1" width="1" height="2" fill="currentColor" />
+        <rect x="3" y="3" width="10" height="2" fill="currentColor" />
+        <rect x="3" y="5" width="2" height="7" fill="currentColor" />
+        <rect x="11" y="5" width="2" height="7" fill="currentColor" />
+        <rect class="brand__glass" x="5" y="5" width="6" height="7" />
+        <rect class="brand__flame" x="7" y="7" width="2" height="3" />
+        <rect x="3" y="12" width="10" height="2" fill="currentColor" />
+      </svg>
+      <span class="brand__name">MC Bot Studio</span>
+      <span class="brand__tag">守夜</span>
+    </a>
+    <ul class="nav__links">
+      <li><a href="#ch-handover">故事</a></li>
+      <li><a href="#download">获取</a></li>
+      <li><a href="#docs">手册</a></li>
+      <li><a href="#faq">问答</a></li>
+    </ul>
+    <a class="btn btn--lamp btn--small nav__cta" href="#download">开始守夜</a>
+  </nav>
+
+  <!-- 时间轴：章节导航 -->
+  <nav class="rail" aria-label="故事时间轴">
+    <ol>
+      <li><a href="#top" data-rail="hero"><span class="rail__t">18:00</span><span class="rail__l">下线</span></a></li>
+      <li><a href="#ch-handover" data-rail="handover"><span class="rail__t">18:20</span><span class="rail__l">交接</span></a></li>
+      <li><a href="#ch-storm" data-rail="storm"><span class="rail__t">21:40</span><span class="rail__l">断线</span></a></li>
+      <li><a href="#ch-skills" data-rail="skills"><span class="rail__t">00:30</span><span class="rail__l">新本领</span></a></li>
+      <li><a href="#ch-code" data-rail="code"><span class="rail__t">03:00</span><span class="rail__l">守则</span></a></li>
+      <li><a href="#ch-pocket" data-rail="pocket"><span class="rail__t">05:10</span><span class="rail__l">口袋</span></a></li>
+      <li><a href="#ch-dawn" data-rail="dawn"><span class="rail__t">06:40</span><span class="rail__l">天亮</span></a></li>
+      <li><a href="#download" data-rail="day"><span class="rail__t">08:00</span><span class="rail__l">轮到你</span></a></li>
+    </ol>
+  </nav>
+
+  <!-- HUD：游戏内时间 + Bot 状态 -->
+  <aside class="hud" aria-label="Bot 状态示意">
+    <div class="hud__clock">
+      <span class="hud__orb" data-hud-orb aria-hidden="true"></span>
+      <span data-hud-day>DAY 1</span>
+      <span class="hud__time" data-hud-time>18:00</span>
+      <span class="hud__tick" data-hud-tick>tick 12000</span>
+    </div>
+    <div class="hud__bot">
+      <span class="hud__name">Lantern</span>
+      <span class="hud__kv hud__kv--desired">指令 <b data-hud-desired>待命</b></span>
+      <span class="hud__kv">实况 <b class="state state--idle" data-hud-observed>已停止</b></span>
+    </div>
+  </aside>
+
+  <!-- 守夜日志：随章节追加的事件流（故事演示） -->
+  <aside class="logbook" aria-label="守夜日志（故事演示）">
+    <header class="logbook__head">
+      <span>守夜日志</span>
+      <span class="logbook__live"><i></i>LIVE</span>
+    </header>
+    <ol class="logbook__list" data-log></ol>
+    <footer class="logbook__foot">故事演示日志 · 控制台提供完整事件时间线</footer>
+  </aside>
+
+  <main>
+    <!-- ============ 序章 ============ -->
+    <header class="hero" id="top" data-time="18:00" data-chapter="hero">
+      <div class="hero__inner">
+        <p class="kicker"><span class="kicker__pip"></span>MC Bot Studio · 一个关于守夜的故事</p>
+        <h1 class="hero__title">
+          <span class="hero__line">你下线了。</span>
+          <span class="hero__line hero__line--glow">它还在。</span>
+        </h1>
+        <p class="hero__lead">
+          MC Bot Studio 帮 Minecraft 玩家照看自己的 Bot 助手：你离开之后它持续在线，断线能自己回来，出了问题说得清楚；
+          开发者则可以通过受控的官方 SDK，安全地为它扩展新本领。
+        </p>
+        <div class="hero__cta">
+          <a class="btn btn--lamp" href="#download">领取你的守夜人</a>
+          <a class="btn btn--ghost" href="#docs">翻阅守夜人手册</a>
+        </div>
+        <ul class="hero__facts" aria-label="当前版本">
+          <li><b>本地 Agent</b> 0.2.7</li>
+          <li><b>Plugin SDK</b> 1.3.0</li>
+          <li><b>Android 端</b> 0.1.0</li>
+          <li class="hero__facts--warn">预览阶段 · 尚未公开发布</li>
+        </ul>
+      </div>
+      <a class="scroll-cue" href="#ch-handover"><span>向下滚动，陪它值一夜班</span><i aria-hidden="true"></i></a>
+    </header>
+
+    <!-- ============ 第一章 交接 ============ -->
+    <section class="chapter" id="ch-handover" data-time="18:20" data-chapter="handover" aria-labelledby="t-handover">
+      <article class="page">
+        <header class="page__head"><span class="stamp">18:20 · DAY 1</span><span class="page__no">第一章</span></header>
+        <h2 class="page__title" id="t-handover">交接</h2>
+        <p class="page__lead">晚饭时间到了。你把服务器地址、账号和一句“帮我看着点”交给了它，然后退出了游戏。</p>
+        <p>
+          你不需要守在黑框终端前猜它有没有连上。你在控制台里下达的是<em>指令</em>，本机节点回报的是<em>实况</em>：
+          正在排队就是正在排队，掉线就是掉线，绝不会把卡住画成“运行中”。
+        </p>
+        <ul class="perks">
+          <li><span class="perk__ico perk__ico--key" aria-hidden="true"></span><div><b>一次性配对</b>控制台生成短时配对码，本机一条命令完成加密接入，账号凭据不裸奔。</div></li>
+          <li><span class="perk__ico perk__ico--wire" aria-hidden="true"></span><div><b>可靠送达</b>控制指令与配置变更全程受认证与回执保护，弱网下不丢指令、也不重复执行。</div></li>
+          <li><span class="perk__ico perk__ico--steps" aria-hidden="true"></span><div><b>进度看得见</b>从接过任务到站在出生点值守，每一步都能在时间线里回看。</div></li>
+        </ul>
+        <div class="ribbon" data-ribbon>
+          <div class="ribbon__track" data-ribbon-track></div>
+          <div class="ribbon__foot">
+            <span data-ribbon-caption>等待交接……</span>
+            <button class="btn btn--small btn--ghost" type="button" data-ribbon-replay>重新播放</button>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ============ 第二章 断线 ============ -->
+    <section class="chapter" id="ch-storm" data-time="21:40" data-chapter="storm" aria-labelledby="t-storm">
+      <article class="page">
+        <header class="page__head"><span class="stamp">21:40 · DAY 1</span><span class="page__no">第二章</span></header>
+        <h2 class="page__title" id="t-storm">断线</h2>
+        <p class="page__lead">21:40，服主重启了服务器。连接在一瞬间断开，聊天框里刷过一行红字。</p>
+        <p>
+          它不会原地卡死，也不会无脑刷屏式地反复撞门。网络抖动、服主重启这类<em>可恢复</em>的掉线会自动按节奏重连；
+          账号失效、版本不符这类需要你出手的问题，则会带着明确原因停下，等你醒来处理。
+        </p>
+        <ul class="perks">
+          <li><span class="perk__ico perk__ico--loop" aria-hidden="true"></span><div><b>自动恢复</b>可恢复故障按节奏退避重连；本机节点断网恢复后，值守任务也会自动续上。</div></li>
+          <li><span class="perk__ico perk__ico--box" aria-hidden="true"></span><div><b>互不牵连</b>每只 Bot 各自独立运行，单个任务出现异常不会拖垮其他助手。</div></li>
+          <li><span class="perk__ico perk__ico--ack" aria-hidden="true"></span><div><b>现场可回溯</b>事件时间线、运行日志与异常提醒集中呈现，第二天一早就能看清昨晚发生了什么。</div></li>
+        </ul>
+        <div class="storm" data-storm>
+          <div class="storm__head">
+            <span class="storm__title">重连演示</span>
+            <span class="storm__timer" data-storm-timer>00.0s</span>
+          </div>
+          <ol class="storm__steps" data-storm-steps>
+            <li class="storm__idle">等待暴风雨……</li>
+          </ol>
+          <div class="storm__foot">
+            <button class="btn btn--small btn--lamp" type="button" data-storm-run>⚡ 模拟一次服务器重启</button>
+            <span class="note">节奏已压缩；真实重试间隔按运行策略自适应调整。</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ============ 第三章 新本领 ============ -->
+    <section class="chapter" id="ch-skills" data-time="00:30" data-chapter="skills" aria-labelledby="t-skills">
+      <article class="page page--wide">
+        <header class="page__head"><span class="stamp">00:30 · DAY 2</span><span class="page__no">第三章</span></header>
+        <h2 class="page__title" id="t-skills">新本领</h2>
+        <p class="page__lead">午夜，一位路过的玩家在它身边停下。下午，你给它装过几本“技能书”。</p>
+        <p>
+          插件是 MC Bot Studio 的<em>受控扩展</em>，不是把整台电脑交给第三方脚本。每本技能书都要先写清自己需要哪些权限，
+          安装时由你逐项确认，运行时也只能在被允许的边界内行动，绝不越界触碰本机文件或底层账号凭据。
+        </p>
+
+        <div class="shelf" role="list">
+          <div class="book book--official" role="listitem">
+            <span class="book__tag">官方插件</span>
+            <h3>自动登录</h3>
+            <p>进服就绪后，自动发送你预先配置好的登录指令。</p>
+            <div class="chips"><code>就绪触发</code><code>发送指令</code></div>
+          </div>
+          <div class="book book--official" role="listitem">
+            <span class="book__tag">官方插件</span>
+            <h3>对话监控</h3>
+            <p>收集游戏内聊天记录，方便在控制台实时查看与回溯。</p>
+            <div class="chips"><code>聊天记录</code><code>结构化面板</code></div>
+          </div>
+          <div class="book" role="listitem">
+            <span class="book__tag">示例插件</span>
+            <h3>区域哨兵</h3>
+            <p>有玩家进入半径时转头致意，并持续上报附近人数。</p>
+            <div class="chips"><code>观察附近</code><code>视角互动</code></div>
+          </div>
+          <div class="book" role="listitem">
+            <span class="book__tag">示例插件</span>
+            <h3>补给审计</h3>
+            <p>背包变化时自动盘点库存，过滤噪音后上报补给状态。</p>
+            <div class="chips"><code>背包盘点</code><code>状态上报</code></div>
+          </div>
+          <div class="book" role="listitem">
+            <span class="book__tag">示例插件</span>
+            <h3>AI 对话</h3>
+            <p>被 @ 提到时，结合近期公共聊天回复一句；私聊不进入上下文。</p>
+            <div class="chips"><code>公共聊天</code><code>受控密钥</code></div>
+          </div>
+          <div class="book book--locked" role="listitem">
+            <span class="book__tag">工作区私有</span>
+            <h3>仓储信使</h3>
+            <p>负责在指定区域与附近箱子间整理物资。未通过安全检验的私有扩展默认拒绝运行。</p>
+            <div class="chips"><code>受限隔离</code><code>默认拒绝</code></div>
+          </div>
+        </div>
+
+        <div class="gate" data-gate>
+          <div class="gate__head">
+            <span class="gate__title">守门人 · 试试越界</span>
+            <span class="note">点一条行为请求，看看守门人是否放行</span>
+          </div>
+          <div class="gate__body">
+            <ul class="gate__code">
+              <li><button type="button" data-gate-try="query"><code>查询 32 格内的附近玩家</code></button></li>
+              <li><button type="button" data-gate-try="action"><code>转向注视刚靠近的玩家</code></button></li>
+              <li><button type="button" data-gate-try="undeclared"><code>未声明移动权限，却请求自动寻路</code></button></li>
+              <li><button type="button" data-gate-try="fs"><code>试图读取宿主电脑的本地文件或发起外链</code></button></li>
+              <li><button type="button" data-gate-try="raw"><code>试图绕过 SDK 直接操纵底层连接对象</code></button></li>
+              <li><button type="button" data-gate-try="private"><code>加载一份未通过安全校验的私有插件</code></button></li>
+            </ul>
+            <output class="gate__out" data-gate-out aria-live="polite">
+              <span class="gate__verdict">？</span>
+              <span>假设当前这本技能书只声明并获批了「观察附近玩家」与「视角转向」两项权限。</span>
+            </output>
+          </div>
+        </div>
+
+        <details class="spell">
+          <summary>给开发者：插件写起来清爽吗？</summary>
+<pre><code><span class="k">import</span> { definePlugin } <span class="k">from</span> <span class="s">"@mc-bot-studio/plugin-sdk"</span>;
+
+<span class="k">export default</span> definePlugin({
+  <span class="c">// 显式声明所需能力与订阅事件，配置表单与权限提示自动生成</span>
+  capabilities: [<span class="s">"players.query"</span>, <span class="s">"movement.lookAt"</span>],
+  subscriptions: [<span class="s">"player.joined"</span>],
+
+  <span class="k">async</span> onEvent(ctx, event) {
+    <span class="k">const</span> nearby = <span class="k">await</span> ctx.players.nearby({ maxDistance: <span class="n">32</span> });
+    ctx.logger.info(<span class="s">`${event.payload.username} 靠近，当前附近 ${nearby.length} 人`</span>);
+  }
+});</code></pre>
+          <p class="note">概念示例，实际接口签名、完整契约与测试工具请以正式发布的 Plugin SDK 文档为准。</p>
+        </details>
+      </article>
+    </section>
+
+    <!-- ============ 第四章 守则 ============ -->
+    <section class="chapter" id="ch-code" data-time="03:00" data-chapter="code" aria-labelledby="t-code">
+      <article class="page">
+        <header class="page__head"><span class="stamp">03:00 · DAY 2</span><span class="page__no">第四章</span></header>
+        <h2 class="page__title" id="t-code">守则</h2>
+        <p class="page__lead">凌晨三点，服务器里只剩它和几只蝙蝠。没有人看着的时候，正是守则起作用的时候。</p>
+        <ol class="tablet">
+          <li><span class="tablet__n">I</span><div><b>只去被授权的服务器。</b>没有对目标服务器的自动化授权，就不出发。</div></li>
+          <li><span class="tablet__n">II</span><div><b>不规避反作弊，不刷屏，不做未授权挂机。</b>这些是明确拒绝的产品红线。</div></li>
+          <li><span class="tablet__n">III</span><div><b>状态如实呈现。</b>排队、断线或失败都直说，不制造“看起来在线”的假象。</div></li>
+          <li><span class="tablet__n">IV</span><div><b>凭据加密隔离。</b>配对信息与账号密钥按最小作用域授权，不向无关插件暴露。</div></li>
+          <li><span class="tablet__n">V</span><div><b>插件先声明，后运行。</b>所有扩展能力经过受控接口，不赋予任意系统权限。</div></li>
+          <li><span class="tablet__n">VI</span><div><b>拿不准的扩展，宁可不跑。</b>未经安全校验的私有插件默认拒绝加载，把风险挡在门外。</div></li>
+          <li><span class="tablet__n">VII</span><div><b>你的数据归你自己。</b>面向个人与小团队的自托管助手，不做公共 Bot 托管农场。</div></li>
+        </ol>
+        <p class="note">这是我们从第一天起立下的产品原则与合规承诺，具体细则可在下方手册中查阅。</p>
+      </article>
+    </section>
+
+    <!-- ============ 第五章 口袋 ============ -->
+    <section class="chapter" id="ch-pocket" data-time="05:10" data-chapter="pocket" aria-labelledby="t-pocket">
+      <article class="page page--split">
+        <div>
+          <header class="page__head"><span class="stamp">05:10 · DAY 2</span><span class="page__no">第五章</span></header>
+          <h2 class="page__title" id="t-pocket">口袋</h2>
+          <p class="page__lead">05:10，你半梦半醒地想：要是电脑也关了呢？</p>
+          <p>
+            那就让手机来接班。Android 客户端自带完整的<em>便携值守节点</em>：填好平台地址与配对码，安全连接并启动宿主，
+            一只 Bot 就能直接住在你的口袋里。概览、实时监视、日志输出与后台管理一应俱全。
+          </p>
+          <ul class="perks">
+            <li><span class="perk__ico perk__ico--phone" aria-hidden="true"></span><div><b>后台值守</b>支持切到后台持续运行；应用内提供电池优化引导，减少系统误杀。</div></li>
+            <li><span class="perk__ico perk__ico--wire" aria-hidden="true"></span><div><b>统一管控</b>与电脑节点接入同一套控制台，状态、提醒与操作体验保持一致。</div></li>
+            <li><span class="perk__ico perk__ico--gate" aria-hidden="true"></span><div><b>专注轻巧</b>移动端专注单 Bot 稳定值守，当前版本正在进行发布前真机校验。</div></li>
+          </ul>
+        </div>
+        <div class="phone" aria-hidden="true">
+          <div class="phone__screen">
+            <div class="phone__status"><span>05:10</span><span>▮▮▮ 82%</span></div>
+            <div class="phone__app">
+              <p class="phone__label">便携宿主</p>
+              <div class="phone__card">
+                <div class="phone__row"><b>宿主运行中</b><span class="state state--ok">在线</span></div>
+                <div class="phone__meta">单 Bot 后台值守 · 已开启保活</div>
+              </div>
+              <div class="phone__card phone__card--bot">
+                <div class="phone__row"><b>Lantern</b><span class="state state--ok">运行中</span></div>
+                <div class="phone__bars"><i style="--v:.92"></i><i style="--v:.78"></i><i style="--v:.6"></i></div>
+                <div class="phone__meta">已值守 10h 50m · 自动重连 1 次</div>
+              </div>
+              <p class="phone__label">实时输出</p>
+              <ol class="phone__out" data-phone-out></ol>
+            </div>
+            <div class="phone__tabs"><span class="on">概览</span><span>监视</span><span>输出</span><span>设置</span></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ============ 终章 天亮 ============ -->
+    <section class="chapter chapter--dawn" id="ch-dawn" data-time="06:40" data-chapter="dawn" aria-labelledby="t-dawn">
+      <article class="page page--split">
+        <div>
+          <header class="page__head"><span class="stamp">06:40 · DAY 2</span><span class="page__no">终章</span></header>
+          <h2 class="page__title" id="t-dawn">天亮了</h2>
+          <p class="page__lead">天边泛白。你上线，它把一份夜报递给你。</p>
+          <p>
+            故事里出现过的事件时间线、运行日志、告警通知与实时终端，都是 Web 控制台里的日常功能；
+            打开概览页，“需要处理”卡片会把真正要你出手的事放在最前面，一切安好时则安静退到后台。
+          </p>
+          <p class="dawn__cta">今晚，轮到你的 Bot 了。</p>
+          <div class="hero__cta">
+            <a class="btn btn--lamp" href="#download">领取你的守夜人</a>
+            <a class="btn btn--ghost" href="#faq">先问几个问题</a>
+          </div>
+        </div>
+        <figure class="receipt">
+          <figcaption>夜报 · Lantern · 第 1 夜</figcaption>
+          <dl>
+            <div><dt>在线时长</dt><dd>12h 20m <small>18:20 → 06:40</small></dd></div>
+            <div><dt>断线恢复</dt><dd>1 次 · 自动回来 <small>用时 47s</small></dd></div>
+            <div><dt>技能触发</dt><dd>致意 4 次 · AI 回复 2 次</dd></div>
+            <div><dt>越权拦截</dt><dd class="ok">0 越权 · 全程受控</dd></div>
+            <div><dt>拒绝加载</dt><dd>1 <small>未过审私有扩展 · 默认拒绝</small></dd></div>
+            <div><dt>需要处理</dt><dd class="ok">0 项</dd></div>
+          </dl>
+          <p class="receipt__foot">故事演示数据 · 实际以控制台记录为准</p>
+        </figure>
+      </article>
+    </section>
+
+    <!-- ================= 白昼：获取 / 手册 / 问答 ================= -->
+    <div class="daylight">
+
+      <!-- 获取与下载 -->
+      <section class="sheet" id="download" data-time="08:00" data-chapter="day" aria-labelledby="t-download">
+        <header class="sheet__head">
+          <p class="sheet__kicker">08:00 · 获取与部署</p>
+          <h2 id="t-download">你打算让它在哪里守夜？</h2>
+          <p class="sheet__lead">选一个值班地点，下面会给出对应的准备与上手步骤。所有路径都基于你的自托管控制台。</p>
+        </header>
+
+        <div class="callout">
+          <b>预览阶段说明</b>
+          MC Bot Studio 目前处于公开预览前的打磨与验收阶段，尚未发布正式公网安装包。正式版放行时，将同步公布各端安装包、版本号与 SHA-256 校验值。
+        </div>
+
+        <div class="picker" role="tablist" aria-label="值班地点">
+          <button role="tab" aria-selected="true" data-pick="pc"><span class="picker__ico picker__ico--pc"></span>我的电脑</button>
+          <button role="tab" aria-selected="false" data-pick="server"><span class="picker__ico picker__ico--server"></span>常开的服务器</button>
+          <button role="tab" aria-selected="false" data-pick="android"><span class="picker__ico picker__ico--android"></span>我的安卓手机</button>
+          <button role="tab" aria-selected="false" data-pick="dev"><span class="picker__ico picker__ico--dev"></span>我想写插件</button>
+        </div>
+
+        <div class="route" data-route="pc" role="tabpanel">
+          <ol class="steps">
+            <li><b>准备控制台</b><span>在一台能运行容器的本机或服务器上部署自托管平台，浏览器打开 Web 控制台注册工作区。</span></li>
+            <li><b>安装本地 Agent</b><span>在运行 Bot 的电脑上安装与当前版本匹配的 Agent 客户端（支持 Windows 与 Linux）。</span></li>
+            <li><b>配对并上线</b><span>在控制台生成短时一次性配对码，在本地终端完成配对并上线。</span><pre class="cmd"><code>mbs-agent pair &lt;配对码&gt; --platform &lt;控制台地址&gt;
+mbs connect</code></pre></li>
+            <li><b>创建并启动 Bot</b><span>跟随四步向导填写服务器地址、版本（推荐自动检测）、认证方式与可选官方插件，点击启动即可。排障可使用 <code>mbs-agent doctor</code>。</span></li>
+          </ol>
+        </div>
+        <div class="route" data-route="server" role="tabpanel" hidden>
+          <ol class="steps">
+            <li><b>部署自托管控制台</b><span>将平台部署在你的私有服务器或 NAS 上，并放行对应访问端口。</span></li>
+            <li><b>配置节点访问地址</b><span>跨设备连接时，填写服务器局域网或可达地址与平台端口，确保防火墙放行入站连接。</span></li>
+            <li><b>配对并长期值守</b><span>使用一次性配对码绑定服务器上的 Agent，随后在 Web 控制台远程照看多只 Bot。</span><pre class="cmd"><code>mbs-agent pair &lt;配对码&gt; --platform &lt;服务器地址&gt;
+mbs connect</code></pre></li>
+            <li><b>定期备份</b><span>建议开启控制台配置与数据的定期备份，保障长期运营稳定无忧。</span></li>
+          </ol>
+        </div>
+        <div class="route" data-route="android" role="tabpanel" hidden>
+          <ol class="steps">
+            <li><b>先有一个控制台</b><span>在电脑或服务器上运行你的自托管平台，并确保手机与平台网络可达。</span></li>
+            <li><b>安装 Android Agent</b><span>安装 MC Bot Studio Android 客户端（当前处于发布前真机校验阶段）。</span></li>
+            <li><b>安全连接并启动宿主</b><span>打开 App，填写控制台地址与一次性配对码，连接后一键启动便携宿主。</span></li>
+            <li><b>开启后台保活</b><span>按 App 内“后台权限”指引关闭电池优化。便携节点专注单 Bot 稳定值守。</span></li>
+          </ol>
+        </div>
+        <div class="route" data-route="dev" role="tabpanel" hidden>
+          <ol class="steps">
+            <li><b>获取 Plugin SDK</b><span>安装官方 <code>@mc-bot-studio/plugin-sdk</code> 开发包（正式版发布后开放公共包源）。</span></li>
+            <li><b>初始化插件项目</b><span>使用官方脚手架生成 TypeScript 或 JavaScript 插件模板。</span><pre class="cmd"><code>studio-plugin scaffold ./my-plugin --typescript</code></pre></li>
+            <li><b>本地测试与校验</b><span>使用配套测试工具验证事件、查询与动作行为，并构建标准插件包。</span><pre class="cmd"><code>studio-plugin build .
+studio-plugin verify .</code></pre></li>
+            <li><b>提交与授权管理</b><span>通过控制台管理插件版本与权限声明；私有扩展受独立安全验收规则保护。</span></li>
+          </ol>
+        </div>
+
+        <h3 class="sheet__sub">组件一览</h3>
+        <div class="artifacts">
+          <article class="artifact">
+            <header><h4>自托管平台</h4><span class="badge">容器部署</span></header>
+            <p>Web 运营控制台与团队工作区，集中管理 Bot 配置、日志、监控与告警通知。</p>
+            <dl><dt>运行环境</dt><dd>支持容器的主机</dd><dt>校验值</dt><dd class="muted">随正式发布公布</dd></dl>
+            <button class="link link--btn" type="button" data-read="deploy">查看部署说明 →</button>
+          </article>
+          <article class="artifact">
+            <header><h4>本地 Agent <small>0.2.7</small></h4><span class="badge">预览版</span></header>
+            <p>运行在你的电脑或服务器上，负责实际托管 Bot、自动重连与隔离执行插件。</p>
+            <dl><dt>支持系统</dt><dd>Windows / Linux</dd><dt>校验值</dt><dd class="muted">随正式发布公布</dd></dl>
+            <button class="link link--btn" type="button" data-read="quickstart">查看配对指引 →</button>
+          </article>
+          <article class="artifact">
+            <header><h4>Android 端 <small>0.1.0</small></h4><span class="badge badge--warn">校验中</span></header>
+            <p>掌上控制台与便携单 Bot 宿主，关掉电脑也能用旧手机替你值守。</p>
+            <dl><dt>运行环境</dt><dd>Android 手机</dd><dt>校验值</dt><dd class="muted">随正式发布公布</dd></dl>
+            <button class="link link--btn" type="button" data-read="mobile">了解便携宿主 →</button>
+          </article>
+          <article class="artifact">
+            <header><h4>Plugin SDK <small>1.3.0</small></h4><span class="badge badge--warn">开发预览</span></header>
+            <p>面向 Mineflayer 生态开发者的受控插件工具包，提供声明式能力契约与脚手架。</p>
+            <dl><dt>开发语言</dt><dd>TypeScript / JS</dd><dt>校验值</dt><dd class="muted">随正式发布公布</dd></dl>
+            <button class="link link--btn" type="button" data-read="sdk">阅读开发概览 →</button>
+          </article>
+        </div>
+      </section>
+
+      <!-- 手册 -->
+      <section class="sheet" id="docs" data-time="10:00" data-chapter="day" aria-labelledby="t-docs">
+        <header class="sheet__head">
+          <p class="sheet__kicker">10:00 · 文档手册</p>
+          <h2 id="t-docs">守夜人手册</h2>
+          <p class="sheet__lead">左边是 30 分钟上手路线，右边是面向玩家与开发者的公开指南——点击卡片即可直接阅读。</p>
+        </header>
+
+        <div class="manual">
+          <aside class="quest">
+            <h3>30 分钟：从零到稳定值守</h3>
+            <ol>
+              <li><i>0</i><div><b>行前确认</b>准备好服务器地址、账号与<strong>自动化授权</strong>——没有授权不要继续。</div></li>
+              <li><i>1</i><div><b>部署控制台</b>启动自托管平台并打开 Web 控制台。</div></li>
+              <li><i>2</i><div><b>建立工作区</b>首个注册账号即管理员，可按角色邀请同伴协管或只读查看。</div></li>
+              <li><i>3</i><div><b>配对节点</b>获取一次性配对码，让电脑、服务器或安卓手机上线。</div></li>
+              <li><i>4</i><div><b>派出 Bot</b>四步向导完成配置，观察进度自然推进到“运行中”。</div></li>
+              <li><i>5</i><div><b>日常照看</b>有事看“需要处理”与事件时间线，没事就安心去睡。</div></li>
+            </ol>
+            <button class="btn btn--ink btn--small" type="button" data-read="quickstart">打开完整上手手册</button>
+          </aside>
+
+          <div class="library">
+            <div class="library__bar">
+              <div class="filters" role="tablist" aria-label="文档分类">
+                <button type="button" class="on" data-shelf="all">全部</button>
+                <button type="button" data-shelf="player">玩家指南</button>
+                <button type="button" data-shelf="dev">插件开发</button>
+                <button type="button" data-shelf="ops">部署与运维</button>
+                <button type="button" data-shelf="safe">安全与合规</button>
+              </div>
+              <label class="search"><span class="sr">搜索手册</span><input type="search" placeholder="搜索手册…" data-doc-search /></label>
+            </div>
+            <ul class="docs" data-docs>
+              <li data-shelf="player"><button type="button" data-read="quickstart"><b>快速上手指南</b><span>玩家视角，30 分钟跑起第一只守夜 Bot</span></button></li>
+              <li data-shelf="player"><button type="button" data-read="care"><b>日常照看与故障排查</b><span>读懂状态反馈、事件时间线、通知与批量操作</span></button></li>
+              <li data-shelf="player"><button type="button" data-read="mobile"><b>用安卓手机充当节点</b><span>配对连接、实时监视与后台保活建议</span></button></li>
+              <li data-shelf="dev"><button type="button" data-read="sdk"><b>Plugin SDK 开发概览</b><span>声明式配置、受控能力、事件订阅与本地测试</span></button></li>
+              <li data-shelf="dev"><button type="button" data-read="permissions"><b>权限模型与安全边界</b><span>插件能做什么、不能做什么，以及私有扩展规则</span></button></li>
+              <li data-shelf="ops"><button type="button" data-read="deploy"><b>自托管部署须知</b><span>网络连通、凭据安全与备份建议</span></button></li>
+              <li data-shelf="safe"><button type="button" data-read="compliance"><b>合规框架与使用边界</b><span>服务器授权要求、非官方声明与产品非目标</span></button></li>
+              <li data-shelf="safe"><button type="button" data-read="security"><b>安全响应与版本状态</b><span>漏洞反馈方式与当前预览阶段说明</span></button></li>
+            </ul>
+            <p class="empty" data-docs-empty hidden>书架上没有找到，换个词试试。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 问答 -->
+      <section class="sheet" id="faq" data-time="12:00" data-chapter="day" aria-labelledby="t-faq">
+        <header class="sheet__head">
+          <p class="sheet__kicker">12:00 · 常见解答</p>
+          <h2 id="t-faq">守夜人常被问到的事</h2>
+          <p class="sheet__lead">关于账号、掉线、插件权限与合规边界的常见疑问都在这里。</p>
+        </header>
+        <div class="library__bar">
+          <div class="filters" role="tablist" aria-label="问题分类">
+            <button type="button" class="on" data-qcat="all">全部</button>
+            <button type="button" data-qcat="player">玩家</button>
+            <button type="button" data-qcat="dev">开发者</button>
+            <button type="button" data-qcat="safe">安全与合规</button>
+          </div>
+          <label class="search"><span class="sr">搜索问题</span><input type="search" placeholder="搜索问题…" data-faq-search /></label>
+        </div>
+        <div class="faq" data-faq>
+          <details class="qa" data-qcat="player"><summary>我必须使用正版账号吗？</summary><div class="qa__a">不一定。创建 Bot 时可根据目标服务器选择离线模式、Microsoft 正版账号或第三方认证账号。敏感凭据均会加密保存，并仅在对应作用域内使用。</div></details>
+          <details class="qa" data-qcat="player"><summary>电脑关机了，Bot 还会在线吗？</summary><div class="qa__a">Bot 运行在你绑定的节点设备上。电脑关机后，该节点上的 Bot 会如实显示离线，待设备重新上线后自动续接。若想离开电脑继续值守，可以把节点放在常开的私有服务器，或使用 Android 便携节点。</div></details>
+          <details class="qa" data-qcat="player"><summary>服务器重启或网络波动，需要我手动重连吗？</summary><div class="qa__a">不需要。遇到断线或短暂超时等可恢复情况，Bot 会按节奏自动退避重连；如果是账号失效、被服务器踢出或版本不兼容等需要人工介入的问题，控制台会给出清晰原因与排查建议。</div></details>
+          <details class="qa" data-qcat="player"><summary>支持哪些 Minecraft 版本？多人可以一起管吗？</summary><div class="qa__a">面向 Minecraft Java 版服务器，创建时推荐开启版本自动检测。控制台支持团队工作区，可按管理员、操作员与只读成员分配权限，协作照看多只 Bot。</div></details>
+          <details class="qa" data-qcat="player"><summary>一部安卓手机能同时跑几只 Bot？</summary><div class="qa__a">为了保证续航、内存与后台稳定性，Android 便携节点专注托管单只 Bot；需要同时值守多只 Bot 时，建议使用电脑或常开服务器节点。</div></details>
+          <details class="qa" data-qcat="dev"><summary>插件可以做什么，不能做什么？</summary><div class="qa__a">插件可以通过官方 SDK 响应游戏事件、查询周围环境与背包、发起受控动作以及上报结构化监控数据。插件无法读取本机文件、不能任意访问网络或系统进程，也无法触碰账号原始凭据与底层连接对象。</div></details>
+          <details class="qa" data-qcat="dev"><summary>为什么自己写的私有插件默认不能直接跑？</summary><div class="qa__a">为了防止不受信任代码危及你的设备与服务器，私有或未经过安全校验的扩展默认处于“拒绝加载”状态，直到满足对应的安全隔离与验证要求。</div></details>
+          <details class="qa" data-qcat="dev"><summary>声明了权限，插件就能在任何时候执行动作吗？</summary><div class="qa__a">不是。权限声明只是插件的能力需求清单，实际执行前还必须经过你的安装授权与运行时的安全及状态检查。</div></details>
+          <details class="qa" data-qcat="safe"><summary>可以拿它在任意公共服务器上挂机吗？</summary><div class="qa__a">不可以。你必须明确拥有对目标服务器进行自动化的授权，并遵守 Minecraft Usage Guidelines。反作弊规避、刷屏与未授权挂机是明确不支持的产品红线。</div></details>
+          <details class="qa" data-qcat="safe"><summary>这是 Mojang 或 Microsoft 的官方产品吗？数据存在哪？</summary><div class="qa__a">不是。MC Bot Studio 是独立项目，与 Mojang / Microsoft 无关联也无官方背书，也不是公共 Bot 托管农场。平台支持完全自托管，配置与运行记录保存在你自己掌控的环境中。</div></details>
+        </div>
+        <p class="empty" data-faq-empty hidden>没有匹配的问题。</p>
+      </section>
+    </div>
+  </main>
+
+  <!-- 内置手册阅读抽屉 -->
+  <div class="drawer" data-drawer hidden>
+    <div class="drawer__backdrop" data-drawer-close></div>
+    <article class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+      <header class="drawer__head">
+        <div>
+          <span class="drawer__cat" data-drawer-cat>指南</span>
+          <h3 id="drawer-title" data-drawer-title>手册标题</h3>
+        </div>
+        <button class="drawer__close" type="button" data-drawer-close aria-label="关闭手册">✕</button>
+      </header>
+      <div class="drawer__body" data-drawer-body></div>
+      <footer class="drawer__foot">
+        <span>MC Bot Studio · 公开守夜人手册（预览版）</span>
+        <button class="btn btn--ink btn--small" type="button" data-drawer-close>合上手册</button>
+      </footer>
+    </article>
+  </div>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <b>MC Bot Studio</b>
+        <span>可靠运营 · 受控插件生态</span>
+      </div>
+      <ul class="footer__links">
+        <li><button type="button" data-read="quickstart">快速上手</button></li>
+        <li><button type="button" data-read="sdk">插件开发</button></li>
+        <li><button type="button" data-read="compliance">合规边界</button></li>
+        <li><button type="button" data-read="security">安全与版本</button></li>
+      </ul>
+      <p class="footer__legal">
+        本项目与 Mojang / Microsoft 无关，也不暗示官方背书。使用者须拥有对目标服务器进行自动化的授权，并遵守
+        <a href="https://www.minecraft.net/en-us/usage-guidelines" rel="noopener" target="_blank">Minecraft Usage Guidelines</a>。
+        页面中的故事情节与夜报为演示示例，当前产品处于预览打磨阶段，实际交付以正式发布公告为准。
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
