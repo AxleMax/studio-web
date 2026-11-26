@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Serif+SC:wght@500;700;900&family=Silkscreen&display=swap" />
-  <script type="module" crossorigin src="./assets/index-DOmp23q0.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-B2afWhui.css">
+  <script type="module" crossorigin src="./assets/index-D1xBNdBN.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CAB6XTRC.css">
 </head>
 <body>
   <!-- 世界：天空、日月、地形、Bot 与天气（纯装饰） -->
@@ -97,12 +97,16 @@
     </ol>
   </nav>
 
-  <!-- HUD：游戏内时间 + Bot 状态 + 移动/平板日志入口 -->
+  <!-- HUD：桌面端左下角仪表，手机端居中悬浮胶囊 Dock -->
   <aside class="hud" aria-label="Bot 状态示意" data-i18n-aria="a11y.hudLabel">
     <div class="hud__clock">
-      <span class="hud__orb" data-hud-orb aria-hidden="true"></span>
-      <span data-hud-day>DAY 1</span>
-      <span class="hud__time" data-hud-time>18:00</span>
+      <button class="hud__chbtn" type="button" data-chapter-open data-i18n-aria="a11y.openChapters">
+        <span class="hud__orb" data-hud-orb aria-hidden="true"></span>
+        <span data-hud-day>DAY 1</span>
+        <span class="hud__time" data-hud-time>18:00</span>
+        <span class="hud__chname" data-hud-chapter>下线</span>
+        <span class="hud__caret" aria-hidden="true">▾</span>
+      </button>
       <span class="hud__tick" data-hud-tick>tick 12000</span>
     </div>
     <div class="hud__bot">
@@ -114,6 +118,25 @@
         <span data-i18n="hud.logBtn">日志</span>
       </button>
     </div>
+  </aside>
+
+  <!-- 移动端章节跳转底抽屉 -->
+  <div class="csheet-backdrop" data-chapter-close hidden></div>
+  <aside class="csheet" data-chapter-sheet hidden aria-label="选择故事章节" data-i18n-aria="a11y.openChapters">
+    <header class="csheet__head">
+      <span data-i18n="hud.chapterTitle">今夜时间轴</span>
+      <button class="logbook__close" type="button" data-chapter-close data-i18n-aria="a11y.closeChapters">✕</button>
+    </header>
+    <ol class="csheet__list">
+      <li><a href="#top" data-rail-sheet="hero"><span>18:00</span><b data-i18n="rail.hero">下线</b></a></li>
+      <li><a href="#ch-handover" data-rail-sheet="handover"><span>18:20</span><b data-i18n="rail.handover">交接</b></a></li>
+      <li><a href="#ch-storm" data-rail-sheet="storm"><span>21:40</span><b data-i18n="rail.storm">断线</b></a></li>
+      <li><a href="#ch-skills" data-rail-sheet="skills"><span>00:30</span><b data-i18n="rail.skills">新本领</b></a></li>
+      <li><a href="#ch-code" data-rail-sheet="code"><span>03:00</span><b data-i18n="rail.code">守则</b></a></li>
+      <li><a href="#ch-pocket" data-rail-sheet="pocket"><span>05:10</span><b data-i18n="rail.pocket">口袋</b></a></li>
+      <li><a href="#ch-dawn" data-rail-sheet="dawn"><span>06:40</span><b data-i18n="rail.dawn">天亮</b></a></li>
+      <li><a href="#download" data-rail-sheet="day"><span>08:00</span><b data-i18n="rail.day">轮到你</b></a></li>
+    </ol>
   </aside>
 
   <!-- 守夜日志：桌面端常驻右侧，平板/移动端点击 HUD 日志按钮滑出 -->
@@ -261,6 +284,13 @@
             <p data-i18n="skills.books.b6Desc">负责在指定区域与附近箱子间整理物资。未通过安全检验的私有扩展默认拒绝运行。</p>
             <div class="chips"><code data-i18n="skills.books.b6c1">受限隔离</code><code data-i18n="skills.books.b6c2">默认拒绝</code></div>
           </div>
+        </div>
+        <div class="shelf-meta" aria-hidden="true">
+          <span class="shelf-meta__count" data-shelf-count>1 / 6</span>
+          <div class="shelf-meta__dots" data-shelf-dots>
+            <i class="on"></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <span class="shelf-meta__hint" data-i18n="skills.shelfHint">左右滑动查看全部技能书</span>
         </div>
 
         <div class="gate" data-gate>
@@ -490,17 +520,22 @@ studio-plugin verify .</code></pre></li>
         </header>
 
         <div class="manual">
-          <aside class="quest">
-            <h3 data-i18n="docs.questTitle">30 分钟：从零到稳定值守</h3>
-            <ol>
-              <li><i>0</i><div><b data-i18n="docs.q0t">行前确认</b><span data-i18n-html="docs.q0dHtml">准备好服务器地址、账号与<strong>自动化授权</strong>——没有授权不要继续。</span></div></li>
-              <li><i>1</i><div><b data-i18n="docs.q1t">部署控制台</b><span data-i18n="docs.q1d">启动自托管平台并打开 Web 控制台。</span></div></li>
-              <li><i>2</i><div><b data-i18n="docs.q2t">建立工作区</b><span data-i18n="docs.q2d">首个注册账号即管理员，可按角色邀请同伴协管或只读查看。</span></div></li>
-              <li><i>3</i><div><b data-i18n="docs.q3t">配对节点</b><span data-i18n="docs.q3d">获取一次性配对码，让电脑、服务器或安卓手机上线。</span></div></li>
-              <li><i>4</i><div><b data-i18n="docs.q4t">派出 Bot</b><span data-i18n="docs.q4d">四步向导完成配置，观察进度自然推进到“运行中”。</span></div></li>
-              <li><i>5</i><div><b data-i18n="docs.q5t">日常照看</b><span data-i18n="docs.q5d">有事看“需要处理”与事件时间线，没事就安心去睡。</span></div></li>
-            </ol>
-            <button class="btn btn--ink btn--small" type="button" data-read="quickstart" data-i18n="docs.questBtn">打开完整上手手册</button>
+          <aside class="quest is-collapsed" data-quest>
+            <div class="quest__head">
+              <h3 data-i18n="docs.questTitle">30 分钟：从零到稳定值守</h3>
+              <button class="quest__toggle" type="button" aria-expanded="false" data-quest-toggle data-i18n="docs.questToggleExpand">展开 6 步路线</button>
+            </div>
+            <div class="quest__body">
+              <ol>
+                <li><i>0</i><div><b data-i18n="docs.q0t">行前确认</b><span data-i18n-html="docs.q0dHtml">准备好服务器地址、账号与<strong>自动化授权</strong>——没有授权不要继续。</span></div></li>
+                <li><i>1</i><div><b data-i18n="docs.q1t">部署控制台</b><span data-i18n="docs.q1d">启动自托管平台并打开 Web 控制台。</span></div></li>
+                <li><i>2</i><div><b data-i18n="docs.q2t">建立工作区</b><span data-i18n="docs.q2d">首个注册账号即管理员，可按角色邀请同伴协管或只读查看。</span></div></li>
+                <li><i>3</i><div><b data-i18n="docs.q3t">配对节点</b><span data-i18n="docs.q3d">获取一次性配对码，让电脑、服务器或安卓手机上线。</span></div></li>
+                <li><i>4</i><div><b data-i18n="docs.q4t">派出 Bot</b><span data-i18n="docs.q4d">四步向导完成配置，观察进度自然推进到“运行中”。</span></div></li>
+                <li><i>5</i><div><b data-i18n="docs.q5t">日常照看</b><span data-i18n="docs.q5d">有事看“需要处理”与事件时间线，没事就安心去睡。</span></div></li>
+              </ol>
+              <button class="btn btn--ink btn--small" type="button" data-read="quickstart" data-i18n="docs.questBtn">打开完整上手手册</button>
+            </div>
           </aside>
 
           <div class="library">
@@ -557,6 +592,7 @@ studio-plugin verify .</code></pre></li>
           <details class="qa" data-qcat="safe"><summary data-i18n="faq.items.q9">可以拿它在任意公共服务器上挂机吗？</summary><div class="qa__a" data-i18n="faq.items.a9">不可以。你必须明确拥有对目标服务器进行自动化的授权，并遵守 Minecraft Usage Guidelines。反作弊规避、刷屏与未授权挂机是明确不支持的产品红线。</div></details>
           <details class="qa" data-qcat="safe"><summary data-i18n="faq.items.q10">这是 Mojang 或 Microsoft 的官方产品吗？数据存在哪？</summary><div class="qa__a" data-i18n="faq.items.a10">不是。MC Bot Studio 是独立项目，与 Mojang / Microsoft 无关联也无官方背书，也不是公共 Bot 托管农场。平台支持完全自托管，配置与运行记录保存在你自己掌控的环境中。</div></details>
         </div>
+        <button class="faq__more" type="button" data-faq-more hidden data-i18n="faq.showAll">展开全部 10 条问题</button>
         <p class="empty" data-faq-empty hidden data-i18n="faq.empty">没有匹配的问题。</p>
       </section>
     </div>
